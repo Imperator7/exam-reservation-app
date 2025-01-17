@@ -1,15 +1,8 @@
 require('dotenv').config({ path: 'config.env' })
 
-const express = require('express')
-const app = express()
+const app = require('./app.js')
 
-const PORT = process.env.SERVER_PORT
-
-app.use(express.json())
-
-app.get('/', (req, res) => {
-  res.send('Hello, world')
-})
+const PORT = process.env.SERVER_PORT || 3000
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
