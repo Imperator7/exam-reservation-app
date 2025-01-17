@@ -1,0 +1,63 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Run tests
+        run: |
+          cd client
+          if [ -z "$(find src -name '*.test.js')" ]; then
+            echo "No tests found, skipping..."
+          else
+            npm test
+          fi
+
+  backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Set up environment variables
+        run: echo "TEST_DB_URL=$TEST_DB_URL" > .env
+        env:
+          TEST_DB_URL: ${{ secrets.TEST_DB_URL }}
+
+      - name: Run tests
+        run: |
+          cd backend
+          npm test
